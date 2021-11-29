@@ -3,35 +3,35 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\Models\BlogPost;
 class PostController extends Controller
 {
 
-    private $posts = [
-        1 => [
-            'title' => 'Intro to Laravel',
-            'content' => 'This is a short intro to Laravel',
-            'is_new' => 1,
-            'has_comments' => true
-        ],
-        2 => [
-            'title' => 'Intro to PHP',
-            'content' => 'This is a short intro to PHP',
-            'is_new' => 2
-        ],
-        20 => [
-            'title' => 'Som defaultna 20',
-            'content' => 'Som defaultna 20 a nie som nova',
-            'is_new' => 20,
-            'has_comments' => true
-        ],
-        201 => [
-            'title' => 'Som defaultna 201',
-            'content' => 'Som defaultna 20 a nie som nova',
-            'is_new' => 20,
-            'has_comments' => true
-        ]
-    ];
+    // private $posts = [
+    //     1 => [
+    //         'title' => 'Intro to Laravel',
+    //         'content' => 'This is a short intro to Laravel',
+    //         'is_new' => 1,
+    //         'has_comments' => true
+    //     ],
+    //     2 => [
+    //         'title' => 'Intro to PHP',
+    //         'content' => 'This is a short intro to PHP',
+    //         'is_new' => 2
+    //     ],
+    //     20 => [
+    //         'title' => 'Som defaultna 20',
+    //         'content' => 'Som defaultna 20 a nie som nova',
+    //         'is_new' => 20,
+    //         'has_comments' => true
+    //     ],
+    //     201 => [
+    //         'title' => 'Som defaultna 201',
+    //         'content' => 'Som defaultna 20 a nie som nova',
+    //         'is_new' => 20,
+    //         'has_comments' => true
+    //     ]
+    // ];
 
     /**
      * Display a listing of the resource.
@@ -40,7 +40,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        return view('posts.index', ['posts' => $this->posts]);
+        return view('posts.index', ['posts' => BlogPost::all()]);
     }
 
     /**
@@ -72,8 +72,10 @@ class PostController extends Controller
      */
     public function show($id)
     {
-        abort_if(!isset($this->posts[$id]), 404);
-        return view('posts.show', ['post' => $this->posts[$id]]);
+        //abort_if(!isset($this->posts[$id]), 404);
+        //return view('posts.show', ['post' => $this->posts[$id]]);
+
+        return view('posts.show', ['post' => BlogPost::FindOrFail($id)]);
     }
 
     /**
