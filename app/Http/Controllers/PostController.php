@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePost;
 use Illuminate\Http\Request;
 use App\Models\BlogPost;
 class PostController extends Controller
@@ -50,7 +51,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        return view('posts.create');
     }
 
     /**
@@ -59,9 +60,20 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StorePost $request)
     {
-        //
+        $validated = $request->validated();
+
+        //$post = new BlogPost();
+        // $post->title = $validated['title'];
+        // $post->content = $validated['content'];
+        // $post->save();
+        $post = BlogPost::create($validated);
+
+        $request->session()->flash('status', 'BlogPost was created');
+
+        return redirect()->route('posts.show', ['post' => $post->id]);
+
     }
 
     /**
@@ -86,7 +98,7 @@ class PostController extends Controller
      */
     public function edit($id)
     {
-        //
+        return view('posts.edit', ['post' => BlogPost::FindOrFail($id)]);
     }
 
     /**
@@ -96,9 +108,16 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(StorePost $request, $id)
     {
-        //
+        $post = BlogPost::FindOrFail($id);
+        $validated = $request->validated();
+        $post->fill($validated);
+        $post->save();
+
+        $request->session()->flash('status', 'BlogPost was updated');
+
+        return redirect()->route('posts.show', ['post' => $post->id]);
     }
 
     /**
@@ -109,6 +128,12 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $post = BlogPost::FindOrFail($id);
+        $post->delete();
+
+        session()->flash('status', 'BlogPost id:' . $id . 'was deleted');
+
+        return redirect()->route('posts.index');
+
     }
 }
