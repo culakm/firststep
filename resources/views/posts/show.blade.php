@@ -1,28 +1,16 @@
 @extends('layouts.app')
 
-@section('title', $post['title'])
+@section('title', $post->title)
 
-<!-- zaciatok sekcie -->
+<!-- zaciatok sekcie ktora sa yielduje v layouts.app-->
 @section('content') 
 
-@if($post['is_new'] === 1)
-<div>A new blog post using if</div>
-@elseif ($post['is_new'] === 2)
-<div>velmi stary post</div>
-@else
-<div>neznamy post</div>
+<h1>{{ $post->title }}</h1>
+<p>{{ $post->content }}</p>
+<p>Added: {{ $post->created_at->diffForHumans() }}</p>
+@if(now()->diffInMinutes($post->created_at) < 5)
+{{-- ak je nieco novsie ako 5 min --}}
+<div class="alert alert-info">NEW post!</div>
 @endif
-
-@unless ($post['is_new'] === 1)
-<div>Post is_new nie je 1</div>
-@endunless
-
-<h1>{{ $post['title'] }}</h1>
-<p>{{ $post['content'] }}</p>
-
-@isset($post['has_comments'])
-<p>MAME comment</p>
-@endisset
-
 @endsection
 <!-- koniec sekcie -->
