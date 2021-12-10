@@ -13,7 +13,7 @@
     <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 bg-white border-bottom shadow-sm mb-3">
         {{-- <h5 class="my-0 me-md-auto font-weight-normal"></h5>
         <a class="p-2 text-dark" href="{{ route('home.index') }}">FirstStep</a> --}}
-        <h5 class="my-0 me-md-auto font-weight-normal"><a class="p-2 text-dark" href="{{ route('home.index') }}">FirstStep</a></h5>
+        <h5 class="my-0 me-md-auto font-weight-normal"><a class="p-2 text-dark" href="{{ route('home.index') }}"><img src="smiley.gif" style="width:42px;height:42px;"></a>FirstStep</h5>
         <nav class="my-2 my-md-0 mr-md-3">
             <a class="p-2 text-dark" href="{{ route('home.index') }}">Home</a>
             <a class="p-2 text-dark" href="{{ route('home.contact') }}">Contact</a>

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StorePost;
 use Illuminate\Http\Request;
+use App\Http\Requests\StorePost;
 use App\Models\BlogPost;
 class PostController extends Controller
 {
@@ -41,7 +41,13 @@ class PostController extends Controller
      */
     public function index()
     {
-        return view('posts.index', ['posts' => BlogPost::all()]);
+        //$pako = BlogPost::withCount(['comments','comments as new_comments' => function ($query) {$query->where('created_at', '>=', '2021-12-08 13:28:52');}])->get();
+        
+        //return view('posts.index', ['posts' => BlogPost::all()]);
+        return view(
+            'posts.index',
+            ['posts' => BlogPost::withCount('comments')->get()]
+        );
     }
 
     /**
@@ -131,7 +137,7 @@ class PostController extends Controller
         $post = BlogPost::FindOrFail($id);
         $post->delete();
 
-        session()->flash('status', 'BlogPost id:' . $id . 'was deleted');
+        session()->flash('status', 'BlogPost was deleted');
 
         return redirect()->route('posts.index');
 
