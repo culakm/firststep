@@ -92,8 +92,16 @@ class PostController extends Controller
     {
         //abort_if(!isset($this->posts[$id]), 404);
         //return view('posts.show', ['post' => $this->posts[$id]]);
+        // $pako = BlogPost::FindOrFail($id);
+        // $pako = BlogPost::with('comments')->whereKey($id)->get()->first();
+        //dd($pako);
+        // return view('posts.show', ['post' => BlogPost::FindOrFail($id)]);
+        //return view('posts.show', ['post' => BlogPost::with('comments')->whereKey($id)->get()->first()]);
 
-        return view('posts.show', ['post' => BlogPost::FindOrFail($id)]);
+        $bp = BlogPost::FindOrFail($id);
+        //$bp = BlogPost::with('comments')->findOrFail($id);
+        //dd($bp);
+        return view('posts.show', ['post' => $bp]);
     }
 
     /**

@@ -118,7 +118,7 @@ Route::resource(
 //         Route::get(
 //             '/download', function () use ( $posts ) {
 //                 return response()->download(
-//                     public_path('/samurai.jpg', 'vystupne_meno_samuraia.jpg')
+//                     public_path('/images/samurai.jpg', 'vystupne_meno_samuraia.jpg')
 //                 );
 //             }
 //         )->name(
