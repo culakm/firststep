@@ -41,6 +41,10 @@ Route::resource(
 );
 // ->only('index', 'show', 'create', 'store', 'edit', 'update', 'destroy');
 
+
+Auth::routes();
+
+
 // Route::get(
 //     '/posts', function () use ($posts) {
 //         return view('posts.index', ['posts' => $posts]);
