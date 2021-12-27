@@ -12,6 +12,8 @@
  */
 namespace App\Http\Controllers;
 
+
+use Illuminate\Support\Facades\Auth;
 /**
  * HomeController Class Doc Comment
  * 
@@ -34,6 +36,7 @@ class HomeController extends Controller
      */
     public function home()
     {
+        //dd(Auth::user()); // vrati prihlaseneho usera este su metody id(),check() ...
         // template_name
         return view('home.index');
     }
@@ -46,5 +49,15 @@ class HomeController extends Controller
     public function contact()
     {
         return view('home.contact');
+    }
+
+    /**
+     * Function home
+     * 
+     * @return view for home URI
+     */
+    public function secret()
+    {
+        return view('home.secret');
     }
 }

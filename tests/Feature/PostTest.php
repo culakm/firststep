@@ -24,8 +24,11 @@ class PostTest extends TestCase
     public function testSee1BlogPostWhenThereIs1WithNoComments()
     {
         // Arrange part
-        $post = $this->createDummyBlogPost();
+        $bp = $this->createDummyBlogPost();
 
+        // Pretoze BlogPost::factory() vdaka afterCreating vytvara 3 Comment tu ich treba vybazat aby sme mali BlogPost bez komentarov
+        Comment::where('blog_post_id', '=', $bp->id)->delete();
+        
         // Act
         $response = $this->get('/posts');
 
@@ -51,7 +54,7 @@ class PostTest extends TestCase
 
         $response = $this->get('/posts');
 
-        $response->assertSeeText('Comments: 4');
+        $response->assertSeeText('Comments: 7');
     }
 
     public function testStoreValid()
@@ -61,7 +64,8 @@ class PostTest extends TestCase
             'content' => 'At least 10 characters.'
         ];
 
-        $this->post('/posts', $params) //
+        $this->actingAs($this->user())
+            ->post('/posts', $params) //
             ->assertStatus(302) //redirect success
             ->assertSessionHas('status'); //flash status is shown
 
@@ -75,7 +79,8 @@ class PostTest extends TestCase
             'content' => 'x'
         ];
 
-        $this->post('/posts', $params) //
+        $this->actingAs($this->user())
+            ->post('/posts', $params) //
             ->assertStatus(302) //redirect success
             ->assertSessionHas('errors'); //flash status is shown
 
@@ -87,7 +92,8 @@ class PostTest extends TestCase
     public function testUpdateValid()
     {
 
-        $post = $this->createDummyBlogPost();
+        $user = $this->user();
+        $post = $this->createDummyBlogPost($user->id);
 
         $this->assertDatabaseHas('blog_posts',$post->getAttributes());
 
@@ -97,7 +103,8 @@ class PostTest extends TestCase
             'content' => 'updated content'
         ];
 
-        $this->put("/posts/{$post->id}", $params) // najde id novovytvoreneho postu
+        $this->actingAs($user) //$this->user() je definovana v tests/TestCase.php
+            ->put("/posts/{$post->id}", $params) // najde id novovytvoreneho postu
             ->assertStatus(302) //redirect success
             ->assertSessionHas('status'); //flash status is shown
 
@@ -113,28 +120,38 @@ class PostTest extends TestCase
 
     public function testDelete()
     {
+        // vytvorime testovacieho usera
+        $user = $this->user();
         // vytvorime testovacu post
-        $post = $this->createDummyBlogPost();
+        $post = $this->createDummyBlogPost($user->id);
 
         $this->assertDatabaseHas('blog_posts',$post->getAttributes());
 
-        $this->delete("/posts/{$post->id}") // najde id novovytvoreneho postu
+        $this->actingAs($user)
+            ->delete("/posts/{$post->id}") // najde id novovytvoreneho postu
             ->assertStatus(302) //redirect success
             ->assertSessionHas('status'); //flash status is shown
 
             $this->assertEquals(session('status'), 'BlogPost was deleted');
 
-            $this->assertDatabaseMissing('blog_posts',$post->getAttributes());
+            //$this->assertDatabaseMissing('blog_posts',$post->getAttributes());
+            $this->assertSoftDeleted('blog_posts',$post->getAttributes());
     }
 
-    private function createDummyBlogPost(): BlogPost
+    private function createDummyBlogPost( $user_id = null ): BlogPost
     {
         // vytvorime testovacu post
         // $post = new BlogPost();
         // $post->title = '1Post title';
         // $post->content = '1content';
         // $post->save();
-        $post = BlogPost::factory()->newTitle()->create();
+
+        $post = BlogPost::factory()->newTitle()->create(
+            [
+                'user_id' => $user_id ?? $this->user()->id,
+            ]
+        );
+
         return $post;
     }
 }

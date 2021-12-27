@@ -21,7 +21,15 @@ class CreateBlogPostsTable extends Migration
             $table->timestamps();
             
             $table->string('title')->default('');
-            $table->text('content');
+            
+            // pretoze sqlite DB ktoru pouzivame pre testy vyzaduje default value a to mysql nema
+            if (env('DB_CONNECTION') === 'sqlite_testing'){
+                $table->text('content')->default('');
+            } 
+            else {
+                $table->text('content');
+            }
+            
         });
     }
 

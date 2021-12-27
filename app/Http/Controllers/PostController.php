@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\StorePost;
 use App\Models\BlogPost;
+use Illuminate\Support\Facades\Gate;
+
 class PostController extends Controller
 {
 
@@ -33,6 +35,13 @@ class PostController extends Controller
     //         'has_comments' => true
     //     ]
     // ];
+
+    public function __construct()
+    {
+        $this->middleware('auth')
+         ->only(['create','store','edit','update','destroy']);   
+    }
+
 
     /**
      * Display a listing of the resource.
@@ -112,7 +121,10 @@ class PostController extends Controller
      */
     public function edit($id)
     {
-        return view('posts.edit', ['post' => BlogPost::FindOrFail($id)]);
+        $post = BlogPost::FindOrFail($id);
+        // Check if blogpost was created by loged user
+        $this->authorize('update', $post);
+        return view('posts.edit', ['post' => $post]);
     }
 
     /**
@@ -125,6 +137,13 @@ class PostController extends Controller
     public function update(StorePost $request, $id)
     {
         $post = BlogPost::FindOrFail($id);
+
+        // Check if blogpost was created by loged user
+        // if (Gate::denies('update-post', $post)) {
+        //     abort(403, "You can't update this blog post!");
+        // }
+        $this->authorize('update', $post);
+        
         $validated = $request->validated();
         $post->fill($validated);
         $post->save();
@@ -143,6 +162,9 @@ class PostController extends Controller
     public function destroy($id)
     {
         $post = BlogPost::FindOrFail($id);
+        // Check if blogpost was created by loged user
+        $this->authorize('delete', $post);
+        
         $post->delete();
 
         session()->flash('status', 'BlogPost was deleted');
