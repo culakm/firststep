@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\StorePost;
 use App\Models\BlogPost;
+use App\Models\User;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\DB;
+
 
 class PostController extends Controller
 {
@@ -55,7 +58,18 @@ class PostController extends Controller
         //return view('posts.index', ['posts' => BlogPost::all()]);
         return view(
             'posts.index',
-            ['posts' => BlogPost::withCount('comments')->get()]
+            [
+                //'posts' => BlogPost::withCount('comments')
+                // //->orderBy('created_at','desc') // toto je priame zoradovanie, ak toto prebije to global scope
+                //->get()
+
+                //'posts' => BlogPost::latestFunc()->withCount('comments')->get() //zoradovanie pomocou lokalnej funkcie kontrolera, treba ju samozrejme definovat !!!
+
+                'posts' => BlogPost::withCount('comments')->get(), // bez priameho radenia, pouzije sa global scope definovane v modeli
+                'posts_most_commented' => BlogPost::mostCommented()->take(5)->get(), // radenie postov podla poctu komentarov
+                'users_most_active' => User::withMostBlogPosts()->take(5)->get(), // zoznam 5 userov s najviac komentami
+                'users_most_active_month' => User::withMostBlogPostsLastDay()->take(5)->get() // zoznam 5 userov s najviac komentami
+            ]
         );
     }
 
@@ -78,7 +92,7 @@ class PostController extends Controller
     public function store(StorePost $request)
     {
         $validated = $request->validated();
-
+        $validated['user_id'] = $request->user()->id;
         //$post = new BlogPost();
         // $post->title = $validated['title'];
         // $post->content = $validated['content'];

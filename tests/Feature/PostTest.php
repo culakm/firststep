@@ -18,7 +18,7 @@ class PostTest extends TestCase
     {
         $response = $this->get('/posts');
 
-        $response->assertSeeText('Posts not found');
+        $response->assertSeeText('No blog posts yet!');
     }
 
     public function testSee1BlogPostWhenThereIs1WithNoComments()

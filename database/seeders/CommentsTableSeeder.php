@@ -22,7 +22,7 @@ class CommentsTableSeeder extends Seeder
             $this->command->info('There are no blog posts. so no comments will be added!');
             return;
         }
-        $comments_count = (int) $this->command->ask('How many comments to generate?', 200);
+        $comments_count = (int) $this->command->ask('How many comments to generate?', 500);
 
         
         Comment::factory()->count($comments_count)->make()->each(

@@ -7,7 +7,7 @@
 
 <h1>{{ $post->title }}</h1>
 <p>{{ $post->content }}</p>
-<p>Added: {{ $post->created_at->diffForHumans() }}</p>
+<p>Post Added: {{ $post->created_at->diffForHumans() }}</p>
 @if(now()->diffInMinutes($post->created_at) < 5)
 {{-- ak je nieco novsie ako 5 min --}}
 <div class="alert alert-info">NEW post!</div>
@@ -20,7 +20,7 @@
         <p class="bg-dark text-white">NEParny</p>
     @endif
     <p >{{ $loop->iteration }}. {{ $comment->content }}</p>
-    <p class="text-muted">added: {{ $comment->created_at->diffForHumans() }}</p>
+    <p class="text-muted">Comment Added: {{ $comment->created_at->diffForHumans() }}</p>
 @empty
     <p>No comments</p>
 @endforelse

@@ -4,11 +4,16 @@
     <h3 style="background-color: silver">{{ $post->title }} parny</h3>
 @endif --}}
 
-<h3>
-    <a href="{{ route('posts.show', ['post' => $post->id]) }}" class="btn bth-primary">{{ $post->title }}</a>
-</h3>
+
+@if ($post->trashed())
+    <del>
+@endif
+<a class="{{ $post->trashed() ? 'text-muted' : '' }}" href="{{ route('posts.show', ['post' => $post->id]) }}"><h1>{{ $post->title }}</h1></a>
+@if ($post->trashed())
+    </del>
+@endif
 <p class="text-muted">
-    Added {{ $post->created_at->diffForHumans() }}
+    Posted {{ $post->created_at->diffForHumans() }}
     by {{ $post->user->name }}
 </p>
 
@@ -18,11 +23,14 @@
     @can('update', $post)
         <a href="{{ route('posts.edit', ['post' => $post->id]) }}" class="btn btn-primary">Edit</a>
     @endcan
-    @can('delete', $post)
-        <form class="d-inline" action="{{ route('posts.destroy', ['post' => $post->id]) }}" method="POST">
-            @csrf
-            @method('DELETE')
-            <input type="submit" class="btn btn-primary" value="Delete">
-        </form>
-    @endcan
+
+    @if (! $post->trashed())
+        @can('delete', $post)
+            <form class="d-inline" action="{{ route('posts.destroy', ['post' => $post->id]) }}" method="POST">
+                @csrf
+                @method('DELETE')
+                <input type="submit" class="btn btn-primary" value="Delete">
+            </form>
+        @endcan
+    @endif
 </div>
