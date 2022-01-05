@@ -63,9 +63,12 @@ class PostController extends Controller
                 // //->orderBy('created_at','desc') // toto je priame zoradovanie, ak toto prebije to global scope
                 //->get()
 
-                //'posts' => BlogPost::latestFunc()->withCount('comments')->get() //zoradovanie pomocou lokalnej funkcie kontrolera, treba ju samozrejme definovat !!!
 
-                'posts' => BlogPost::withCount('comments')->get(), // bez priameho radenia, pouzije sa global scope definovane v modeli
+                // bez priameho radenia, pouzije sa global scope definovane v modeli ak je tam  vo funkcii boot 
+                //static::addGlobalScope(new LatestScope);
+                //'posts' => BlogPost::withCount('comments')->get(), 
+
+                'posts' => BlogPost::Latest()->withCount('comments')->get(), //zoradovanie pomocou lokalnej scope funkcie kontrolera
                 'posts_most_commented' => BlogPost::mostCommented()->take(5)->get(), // radenie postov podla poctu komentarov
                 'users_most_active' => User::withMostBlogPosts()->take(5)->get(), // zoznam 5 userov s najviac komentami
                 'users_most_active_month' => User::withMostBlogPostsLastDay()->take(5)->get() // zoznam 5 userov s najviac komentami

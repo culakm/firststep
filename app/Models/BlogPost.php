@@ -36,10 +36,17 @@ class BlogPost extends Model
         return $query->withCount('comments')->orderBy('comments_count', 'desc');
     }
 
+    public function scopeLatest(Builder $query)
+    {
+        // Modelu prida stlpec comments_count
+        return $query->orderBy($model::CREATED_AT, 'desc');
+    }
+
     public static function boot(){
         
         // zoradi blogposty pomocou globalnej triedy LatestScope v app/Scopes/LatestScope.php
-        static::addGlobalScope(new LatestScope);
+        // toto nefunguje pre starsie verzie mysql kvoli tomu, ze v LatestScope je order by
+        //static::addGlobalScope(new LatestScope);
         // povoli adminovi videt aj veci s flagom deleted_at
         static::addGlobalScope(new DeletedAdminScope);
         
