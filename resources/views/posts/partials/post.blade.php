@@ -8,14 +8,25 @@
 @if ($post->trashed())
     <del>
 @endif
-<a class="{{ $post->trashed() ? 'text-muted' : '' }}" href="{{ route('posts.show', ['post' => $post->id]) }}"><h1>{{ $post->title }}</h1></a>
+
+<h1>
+    <a class="{{ $post->trashed() ? 'text-muted' : '' }}" href="{{ route('posts.show', ['post' => $post->id]) }}">
+        {{ $post->title }}
+
+        {{-- ak je nieco novsie ako 50 min --}}
+        {{-- <div class="alert alert-info">NEW post!</div> --}}
+        @badgealias(['another_parameter' => 'primary', 'show' => now()->diffInMinutes($post->created_at) < 160])
+            Uplne novy post 6
+        @endbadgealias
+    </a>
+</h1>
+
 @if ($post->trashed())
     </del>
 @endif
-<p class="text-muted">
-    Posted {{ $post->created_at->diffForHumans() }}
-    by {{ $post->user->name }}
-</p>
+
+@updated(['date' => $post->created_at, 'name'=> $post->user->name])
+@endupdated
 
 <p>Comments: {{ $post->comments_count }}</p>
 <a href="{{ route('posts.edit', ['post' => $post->id]) }}" class="btn btn-primary me-3 my-3">Add comment</a>
