@@ -63,6 +63,7 @@ class PostController extends Controller
                 // //->orderBy('created_at','desc') // toto je priame zoradovanie, ak toto prebije to global scope
                 //->get()
 
+                //
                 // bez priameho radenia, pouzije sa global scope definovane v modeli ak je tam  vo funkcii boot 
                 //static::addGlobalScope(new LatestScope);
                 //'posts' => BlogPost::withCount('comments')->get(), 
