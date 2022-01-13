@@ -8,6 +8,8 @@ use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\BlogPost;
 use App\Models\Comment;
+use Illuminate\Support\Facades\Cache;
+
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -54,10 +56,15 @@ class DatabaseSeeder extends Seeder
             $this->command->info('Database was refreshed'); // tu moze byt aj line()
         }
         
+        // odstani cache ktore maju tag blog_post a boli naplnene starymi datami
+        Cache::tags('blog_post')->flush();
+
         $this->call([
             UsersTableSeeder::class,
             BlogPostsTableSeeder::class,
-            CommentsTableSeeder::class
+            CommentsTableSeeder::class,
+            TagsTableSeeder::class,
+            BlogPostTagTableSeeder::class
         ]);
     }
 }

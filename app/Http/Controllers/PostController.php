@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StorePost;
 use App\Models\BlogPost;
 use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\DB;
 
@@ -53,9 +54,12 @@ class PostController extends Controller
      */
     public function index()
     {
+        // nejake navratove veci 
         //$pako = BlogPost::withCount(['comments','comments as new_comments' => function ($query) {$query->where('created_at', '>=', '2021-12-08 13:28:52');}])->get();
-        
         //return view('posts.index', ['posts' => BlogPost::all()]);
+
+        //$posts_most_commented = BlogPost::mostCommented()->take(5)->get(); 
+
         return view(
             'posts.index',
             [
@@ -67,10 +71,13 @@ class PostController extends Controller
                 //static::addGlobalScope(new LatestScope);
                 //'posts' => BlogPost::withCount('comments')->get(), 
 
-                'posts' => BlogPost::Latest()->withCount('comments')->get(), //zoradovanie pomocou lokalnej scope funkcie kontrolera
-                'posts_most_commented' => BlogPost::mostCommented()->take(5)->get(), // radenie postov podla poctu komentarov
-                'users_most_active' => User::withMostBlogPosts()->take(5)->get(), // zoznam 5 userov s najviac komentami
-                'users_most_active_month' => User::withMostBlogPostsLastDay()->take(5)->get() // zoznam 5 userov s najviac komentami
+                //'posts' => BlogPost::Latest()->withCount('comments')->with('user')->with('tags')->get(), //zoradovanie pomocou lokalnej scope funkcie kontrolera
+                'posts' => BlogPost::latestWithRelations()->get(), //latestWithRelations je definovane v BlogPost modeli pretoze sa to este opakuje niekde inde
+                
+                // tieto data doda app/Http/ViewComposers/ActivityComposer.php
+                // 'posts_most_commented' => $posts_most_commented,
+                // 'users_most_active' => $users_most_active,
+                // 'users_most_active_month' => $users_most_active_month,
             ]
         );
     }
@@ -93,8 +100,10 @@ class PostController extends Controller
      */
     public function store(StorePost $request)
     {
+        // vytvori validovane data z requestu
         $validated = $request->validated();
-        $validated['user_id'] = $request->user()->id;
+        // prida usera z requestu
+        $validated['user_id'] = $request->user()->id; 
         //$post = new BlogPost();
         // $post->title = $validated['title'];
         // $post->content = $validated['content'];
@@ -123,10 +132,69 @@ class PostController extends Controller
         // return view('posts.show', ['post' => BlogPost::FindOrFail($id)]);
         //return view('posts.show', ['post' => BlogPost::with('comments')->whereKey($id)->get()->first()]);
 
-        $bp = BlogPost::FindOrFail($id);
-        //$bp = BlogPost::with('comments')->findOrFail($id);
-        //dd($bp);
-        return view('posts.show', ['post' => $bp]);
+        $bp = Cache::tags(['blog_post'])->remember("blog_post_{$id}", 60, function() use($id){
+            // return BlogPost::with('comments')
+            // ->with('user')
+            // ->with('tags')
+            // ->with('comments.user')
+            // ->FindOrFail($id);
+            return BlogPost::with(['comments', 'user', 'tags', 'comments.user'])
+            ->FindOrFail($id);
+        });
+
+        // jedinecne session_id
+        $session_id = session()->getId();
+        // pocet userov
+        $counter_key = "blog_post_{$id}_counter";
+        // info o useroch ktory navstivili stranky
+        $users_key = "blog_post_{$id}_users";
+
+        //pole nacitane z cache : session_id => posledny navstiveny cas
+        $users = Cache::tags(['blog_post'])->get($users_key, []);
+
+        // neexpirovany useri pre $users
+        $users_update = [];
+        $difference = 0;
+        $now = now();
+
+        foreach ($users as $session => $last_visit_time) {
+            // ak rozdiel medzi now() a poslednej navsetvy nejakeho usera je viac ako 1 minuta
+            if ($now->diffInMinutes($last_visit_time) >= 1) {
+                $difference--;
+            } else {
+                $users_update[$session] = $last_visit_time;
+            }
+        }
+
+        
+        if (
+            // user este nie je na zozname ?
+            !array_key_exists($session_id, $users)
+            // user bol na zozname ale vyexpiroval
+            || $now->diffInMinutes($users[$session_id]) >= 1
+        ){
+            $difference++;
+        }
+
+        // updatneme cas navstivenia pre usera
+        $users_update[$session_id] = $now;
+        // do cache dame cerstvy zoznam userov s poslednym casom navstivenia
+        Cache::forever($users_key,$users_update);
+        // updatneme pocet navstivenia
+        if (!Cache::tags(['blog_post'])->has($counter_key)){
+            // kluc este neexistuje
+            Cache::tags(['blog_post'])->forever($counter_key,1);
+        } else {
+            Cache::tags(['blog_post'])->increment($counter_key, $difference);
+        }
+        
+        $counter = Cache::tags(['blog_post'])->get($counter_key);
+
+
+        return view('posts.show', [
+            'post' => $bp,
+            'counter' => $counter
+        ]);
     }
 
     /**

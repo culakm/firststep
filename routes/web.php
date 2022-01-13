@@ -14,7 +14,9 @@
 
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PostCommentController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\PostTagController;
 //use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -47,8 +49,16 @@ Route::resource(
     'posts',
     PostController::class
 );
-// ->only('index', 'show', 'create', 'store', 'edit', 'update', 'destroy');
+// ->only(['index', 'show', 'create', 'store', 'edit', 'update', 'destroy']);
 
+// toto vytvori route posts.comments.store co je akcia v PostCommentController
+// ine akcie nepotrebujeme pretoze comment sa vzdy zobrazuje v ramci blog postu
+Route::resource(
+    'posts.comments',
+    PostCommentController::class
+)->only(['store']);
+
+Route::get('/posts/tag/{tag_id}', [PostTagController::class,'index'])->name('posts.tags.index');
 
 Auth::routes();
 

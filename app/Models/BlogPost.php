@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Cache;
 
 class BlogPost extends Model
 {
@@ -30,6 +31,10 @@ class BlogPost extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function tags(){
+        return $this->belongsToMany(Tag::class)->withTimestamps();
+    }
+
     public function scopeMostCommented(Builder $query)
     {
         // Modelu prida stlpec comments_count
@@ -40,6 +45,12 @@ class BlogPost extends Model
     {
         // Modelu prida stlpec comments_count
         return $query->orderBy($model::CREATED_AT, 'desc');
+    }
+
+    public function scopeLatestWithRelations(Builder $query)
+    {
+        // toto sa pridava do PostTagController.show a tiez PostController.index
+        return $query->Latest()->withCount('comments')->with('user','tags');
     }
 
     public static function boot(){
@@ -54,6 +65,11 @@ class BlogPost extends Model
 
         static::deleting(function (BlogPost $post){
             $post->comments()->delete();
+            Cache::tags(['blog_post'])->forget("blog_post_{$post->id}");
+        });
+
+        static::updating(function (BlogPost $post){
+            Cache::tags(['blog_post'])->forget("blog_post_{$post->id}");
         });
 
         static::restoring(function (BlogPost $post){

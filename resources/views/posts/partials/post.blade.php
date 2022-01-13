@@ -28,20 +28,26 @@
 @updated(['date' => $post->created_at, 'name'=> $post->user->name])
 @endupdated
 
-<p>Comments: {{ $post->comments_count }}</p>
-<a href="{{ route('posts.edit', ['post' => $post->id]) }}" class="btn btn-primary me-3 my-3">Add comment</a>
-<div class="mb-3">
-    @can('update', $post)
-        <a href="{{ route('posts.edit', ['post' => $post->id]) }}" class="btn btn-primary">Edit</a>
-    @endcan
+@tags(['tags' => $post->tags])
+@endtags
 
-    @if (! $post->trashed())
-        @can('delete', $post)
-            <form class="d-inline" action="{{ route('posts.destroy', ['post' => $post->id]) }}" method="POST">
-                @csrf
-                @method('DELETE')
-                <input type="submit" class="btn btn-primary" value="Delete">
-            </form>
+<p>Comments: {{ $post->comments_count }}</p>
+{{-- <a href="{{ route('posts.edit', ['post' => $post->id]) }}" class="btn btn-primary me-3 my-3">Add comment</a> --}}
+<div class="mb-3">
+    @auth
+        @can('update', $post)
+            <a href="{{ route('posts.edit', ['post' => $post->id]) }}" class="btn btn-primary">Edit</a>
         @endcan
-    @endif
+    @endauth
+    @auth
+        @if (! $post->trashed())
+            @can('delete', $post)
+                <form class="d-inline" action="{{ route('posts.destroy', ['post' => $post->id]) }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <input type="submit" class="btn btn-primary" value="Delete">
+                </form>
+            @endcan
+        @endif
+    @endauth
 </div>
