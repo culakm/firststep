@@ -5,11 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\StorePost;
 use App\Models\BlogPost;
+use App\Models\Image;
 use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -109,6 +110,18 @@ class PostController extends Controller
         // $post->content = $validated['content'];
         // $post->save();
         $post = BlogPost::create($validated);
+
+        // file handling
+        // prisiel nam z formularoveho prvku 'thumbnail' file?
+        if ($request->hasFile('thumbnail')){
+            // ulozime file do defaultneho disku v podadresari 'thumbnails' a dostaneme jeho cestu/meno
+            $path = $request->file('thumbnail')->store('thumbnails');
+            // cez BlogPost ulozime
+            $post->image()->save(
+                // vytvorime do TB image cestu k suboru, blog_post_id je urobene automaticky cez relationship
+                Image::create(['path' => $path])
+            );
+        }
 
         $request->session()->flash('status', 'BlogPost was created');
 
@@ -230,6 +243,26 @@ class PostController extends Controller
         
         $validated = $request->validated();
         $post->fill($validated);
+
+        // file handling
+        if ($request->hasFile('thumbnail')){
+            $path = $request->file('thumbnail')->store('thumbnails');
+
+            if($post->image) {
+                // vymazeme stary obrazok
+                Storage::delete($post->image->path);
+                $post->image->path = $path;
+                // uloz cestu k novemu obrazku
+                $post->image->save();
+            } else {
+                // uloz prvy obrazok
+                $post->image()->save(
+                    Image::create(['path' => $path])
+                );
+            }
+        }
+
+        // vsetky zmeny v poste sa ulozia
         $post->save();
 
         $request->session()->flash('status', 'BlogPost was updated');

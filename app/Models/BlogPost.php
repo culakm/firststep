@@ -35,6 +35,11 @@ class BlogPost extends Model
         return $this->belongsToMany(Tag::class)->withTimestamps();
     }
 
+    public function image()
+    {
+        return $this->hasOne(Image::class);
+    }
+
     public function scopeMostCommented(Builder $query)
     {
         // Modelu prida stlpec comments_count

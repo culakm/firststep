@@ -3,7 +3,10 @@
 @section('title', 'Vytvor post')
 
 @section('content')
-<form action="{{ route('posts.store') }}" method="POST">
+<form   method="POST"
+        action="{{ route('posts.store') }}"
+        enctype="multipart/form-data"
+>
     @csrf
     @include('posts.partials.form')
     <div><input type="submit" value="Create" class="btn btn-primary"></div>

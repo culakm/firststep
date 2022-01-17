@@ -14,5 +14,9 @@
 @error('content')
     <div classes="alert alert-danger">{{ $message }}</div>
 @enderror
+<div class="form-group mt-2 mb-2">
+    <label for="thumbnail">Thumbnail</label>
+    <input id="thumbnail" type="file" name="thumbnail" class="form-control">
+</div>
 {{-- toto je error z components errors --}}
 @errors @enderrors

@@ -15,6 +15,7 @@ class AuthServiceProvider extends ServiceProvider
     protected $policies = [
         // 'App\Models\Model' => 'App\Policies\ModelPolicy',
         'App\Models\BlogPost' => 'App\Policies\BlogPostPolicy',
+        'App\Models\User' => 'App\Policies\UserPolicy',
     ];
 
     /**
@@ -49,7 +50,7 @@ class AuthServiceProvider extends ServiceProvider
         // Definujeme Gates naraz (posts.create,posts.view, posts.update a posts.delete)
         Gate::resource('posts', 'App\Policies\BlogPostPolicy');
 
-        // Preskakujeme ostatne gate pre admina
+        // Preskakujeme ostatne gate pre admina, admin moze u vsetkych route update a delete 
         Gate::before( 
             function ($user, $ability) {
                 if ($user->is_admin && in_array($ability,['update','delete'])){
