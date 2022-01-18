@@ -119,7 +119,7 @@ class PostController extends Controller
             // cez BlogPost ulozime
             $post->image()->save(
                 // vytvorime do TB image cestu k suboru, blog_post_id je urobene automaticky cez relationship
-                Image::create(['path' => $path])
+                Image::make(['path' => $path])
             );
         }
 
@@ -256,8 +256,13 @@ class PostController extends Controller
                 $post->image->save();
             } else {
                 // uloz prvy obrazok
+                // $post->image()->save(
+                //     Image::create(['path' => $path])
+                // );
+
+                // uloz prvy obrazok s polymorfizmom
                 $post->image()->save(
-                    Image::create(['path' => $path])
+                    Image::make(['path' => $path])
                 );
             }
         }

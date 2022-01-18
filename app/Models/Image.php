@@ -10,11 +10,18 @@ class Image extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['path','blog_post_id'];
+    protected $fillable = ['path'];
 
-    public function blogPost()
+    // do fillable treba pridat ,'blog_post_id'
+    // public function blogPost()
+    // {
+    //     return $this->belongsTo(BlogPost::class);
+    // }
+
+    // pre polymorfizmus
+    public function imagable()
     {
-        return $this->belongsTo(BlogPost::class);
+        return $this->morphTo();
     }
 
     public function url(){

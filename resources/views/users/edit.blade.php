@@ -13,7 +13,7 @@
 
         <div class="row">
             <div class="col-4">
-                <img src="" class="img-thumbnail avatar"/>
+                <img src="" class="img-thumbnail"/>
                 <div class="card mt-4">
                     <div class="card-body">
                         <h6>Upload a different photo.</h6>

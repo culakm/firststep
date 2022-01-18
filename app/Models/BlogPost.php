@@ -37,7 +37,9 @@ class BlogPost extends Model
 
     public function image()
     {
-        return $this->hasOne(Image::class);
+        //return $this->hasOne(Image::class);
+        // pre polymorfizmus
+        return $this->morphOne(Image::class, 'imageable');
     }
 
     public function scopeMostCommented(Builder $query)
