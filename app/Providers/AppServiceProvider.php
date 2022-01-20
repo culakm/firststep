@@ -36,6 +36,8 @@ class AppServiceProvider extends ServiceProvider
         Blade::aliasComponent('components.card', 'card');
         Blade::aliasComponent('components.tags', 'tags');
         Blade::aliasComponent('components.errors', 'errors');
+        Blade::aliasComponent('components.comment_form', 'comment_form');
+        Blade::aliasComponent('components.comment_list', 'comment_list');
 
         // jednotne loadovanie dat pre posts.index a posts.show views
         view()->composer(['posts.index','posts.show'], ActivityComposer::class);

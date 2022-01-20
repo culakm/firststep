@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateUser;
+use App\Models\Image;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -74,9 +76,41 @@ class UserController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
+    public function update(UpdateUser $request, User $user)
     {
-        return view('users.update', ['user' => $user]);
+
+        if ($request->hasFile('avatar')){
+            $path = $request->file('avatar')->store('avatars');
+
+            // obrazok pre usera uz existuje, ta userovi len updatnem cestu
+            if ($user->image) {
+                $user->image->path = $path;
+                $user->image->save();
+                
+            } else {
+
+                //dd(Image::make(['path' => $path]));
+
+                $user->image()->save(
+                    Image::make(['path' => $path])
+                );
+            }
+
+            // po ulozeni to presmeruje a zobrazi flash
+            // v dvoch krokoch
+            // $request->session()->flash('status', 'User was updated');
+            // return redirect()->route('users.show', ['user' => $user->id]);
+
+            // naraz
+            return redirect()
+                // presmerovanie na show
+                //->route('users.show', ['user' => $user->id])
+                // presmerovanie na seba, update
+                ->back()
+                ->withStatus('Profile image was updated');
+
+        }
+        //return view('users.update', ['user' => $user]);
     }
 
     /**

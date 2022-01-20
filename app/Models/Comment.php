@@ -15,10 +15,17 @@ class Comment extends Model
 
     protected $fillable = ['user_id','content'];
 
-    public function blogPost()
+    // pred polymorph
+    // public function blogPost()
+    // {
+    //     return $this->belongsTo(BlogPost::class);
+    // }
+
+    public function commentable()
     {
-        return $this->belongsTo(BlogPost::class);
+        return $this->morphTo();
     }
+
 
     public function user()
     {
@@ -34,8 +41,16 @@ class Comment extends Model
         parent::boot();
 
         static::creating(function (Comment $comment){
-            Cache::tags(['blog_post'])->forget("blog_post_{$comment->blog_post_id}");
-            Cache::tags(['blog_post'])->forget('posts_most_commented');
+            // pred polymorph
+            // Cache::tags(['blog_post'])->forget("blog_post_{$comment->blog_post_id}");
+
+            // polymorph
+            if ($comment->commentable_type === BlogPost::class ) {
+                Cache::tags(['blog_post'])->forget("blog_post_{$comment->commentable_id}");
+                // toto je aj v pripade ze nie je polymorph
+                Cache::tags(['blog_post'])->forget('posts_most_commented');
+            }
+            
         });
     }
 }

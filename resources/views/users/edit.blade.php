@@ -13,7 +13,7 @@
 
         <div class="row">
             <div class="col-4">
-                <img src="" class="img-thumbnail"/>
+                <img src="{{ $user->image ? $user->image->url() : '' }}" class="img-thumbnail"/>
                 <div class="card mt-4">
                     <div class="card-body">
                         <h6>Upload a different photo.</h6>
@@ -29,6 +29,9 @@
                     <label for="name">Name:</label>
                     <input name="name" class="form-control" value="" type="text" />
                 </div>
+
+                @errors @enderrors
+
                 <div class="form-group">
                     <input class="button button-primary" value="Save changes" type="submit" />
                 </div>

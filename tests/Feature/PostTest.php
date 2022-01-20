@@ -27,7 +27,7 @@ class PostTest extends TestCase
         $bp = $this->createDummyBlogPost();
 
         // Pretoze BlogPost::factory() vdaka afterCreating vytvara 3 Comment tu ich treba vybazat aby sme mali BlogPost bez komentarov
-        Comment::where('blog_post_id', '=', $bp->id)->delete();
+        //Comment::where('blog_post_id', '=', $bp->id)->delete();
         
         // Act
         $response = $this->get('/posts');
@@ -35,7 +35,7 @@ class PostTest extends TestCase
         // Assert
         // Site
         $response->assertSeeText('1Post title');
-        $response->assertSeeText('Add comment');
+        $response->assertSeeText('Comments: 0');
 
         // DB
         $this->assertDatabaseHas('blog_posts',[
@@ -45,16 +45,20 @@ class PostTest extends TestCase
 
     public function testSee1BlogPostWithComments()
     {
+        $user = $this->user();
         $post = $this->createDummyBlogPost();
         
         //Comment::factory(4)->create([
         Comment::factory()->count(4)->create([
-            'blog_post_id' => $post->id
+            // 'blog_post_id' => $post->id  //bez polymorphizmu
+            'commentable_id' => $post->id,
+            'commentable_type' => BlogPost::class, //'App\Model\BlogPost'//BlogPost::class  
+            'user_id' => $user->id
         ]);
 
         $response = $this->get('/posts');
 
-        $response->assertSeeText('Comments: 7');
+        $response->assertSeeText('Comments: 4');
     }
 
     public function testStoreValid()
@@ -153,5 +157,8 @@ class PostTest extends TestCase
         );
 
         return $post;
+
+        
     }
+    
 }

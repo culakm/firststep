@@ -30,27 +30,27 @@ class BlogPostFactory extends Factory
         ]);
     }
 
-    public function configure()
-    {
-        // return $this->afterCreating(function (Author $author) {
-        //     $author->profile()->save(Profile::factory()->make());
-        // });
+    // public function configure()
+    // {
+    //     // return $this->afterCreating(function (Author $author) {
+    //     //     $author->profile()->save(Profile::factory()->make());
+    //     // });
 
-        return $this->afterMaking(function (BlogPost $bp) {
-            //
-        })->afterCreating(function (BlogPost $bp) {
-            // vytvori len blogpost
-            //$bp->comments()->save(Comment::factory()->make());
+    //     return $this->afterMaking(function (BlogPost $bp) {
+    //         //
+    //     })->afterCreating(function (BlogPost $bp) {
+    //         // vytvori len blogpost
+    //         //$bp->comments()->save(Comment::factory()->make());
             
-            // vytvori blogpost s tromi commentami
-            // zalozene na BlogPost
-            // foreach (Comment::factory()->count(3)->make() as $comment){
-            //     $bp->comments()->save($comment);
-            // }
+    //         // vytvori blogpost s tromi commentami
+    //         // zalozene na BlogPost
+    //         // foreach (Comment::factory()->count(3)->make() as $comment){
+    //         //     $bp->comments()->save($comment);
+    //         // }
 
-            // vytvori blogpost s tromi commentami ale zalozene na Comments
-            Comment::factory()->count(3)->for($bp)->create();
+    //         // vytvori blogpost s tromi commentami ale zalozene na Comments
+    //         Comment::factory()->count(3)->for($bp)->create();
 
-        });
-    }
+    //     });
+    // }
 }

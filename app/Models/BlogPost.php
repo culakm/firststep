@@ -23,7 +23,9 @@ class BlogPost extends Model
     public function comments()
     {
         // commenty to pomocou lokalnej scope funkcie modelu comment
-        return $this->hasMany(Comment::class)->latestFunc();
+        // pred polymorph
+        // return $this->hasMany(Comment::class)->latestFunc();
+        return $this->morphMany(Comment::class,'commentable')->latestFunc();
     }
 
     public function user()

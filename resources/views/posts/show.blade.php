@@ -49,19 +49,11 @@
         <p>Currently read by {{ $counter }} people</p>
 
         <h4>Comments</h4>
-        @include('comments.partials.form')
-        @forelse ($post->comments as $comment)
-            @if ($loop->even)
-                <p class="bg-primary text-white">Parny</p>
-            @else
-                <p class="bg-dark text-white">NEParny</p>
-            @endif
-            <p >{{ $loop->iteration }}. {{ $comment->content }}</p>
-            @updated(['date' => $comment->created_at, 'name'=> $comment->user->name])
-            @endupdated
-        @empty
-            <p>No comments</p>
-        @endforelse
+        @comment_form(['route' => route('posts.comments.store', ['post' => $post->id])])
+        @endcomment_form
+
+        @comment_list(['comments' => $post->comments])
+        @endcomment_list
     </div>
     <div class="col-4">
         @include('posts.partials.cards')

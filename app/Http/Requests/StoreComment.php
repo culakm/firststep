@@ -24,7 +24,7 @@ class StoreComment extends FormRequest
     public function rules()
     {
         return [
-            'content' => 'bail|required|min:5|max:256'
+            'content' => 'required|min:5'
         ];
     }
 }

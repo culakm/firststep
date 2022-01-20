@@ -31,6 +31,13 @@ class User extends Authenticatable
         return $this->morphOne(Image::class, 'imageable');
     }
 
+    // toto su komentare na usera
+    public function commentsOn()
+    {
+        return $this->morphMany(Comment::class,'commentable')->latestFunc();
+    }
+
+    // toto su vsetky komentare ktore user vytvoril
     public function comments()
     {
         return $this->hasMany(Comment::class);
