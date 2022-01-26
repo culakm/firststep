@@ -22,11 +22,15 @@ class TagsTableSeeder extends Seeder
         $tags = ['tag_1','tag_2','tag_3','tag_4','tag_5'];
         // faker, musi byt pouzite use Faker\Factory as Faker;
         $faker = Faker::create();
+
         // nahodne generovane slova
         for ($i=0; $i < 5; $i++) { 
             $tags[] = $faker->word();
         }
 
+        $tags_real = ['Sport', 'Sience', 'Politics'];
+
+        $tags = array_merge($tags, $tags_real);
         //pole do collection
         $tags_to_save = collect($tags);
 

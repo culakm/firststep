@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Taggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,7 +12,7 @@ use Illuminate\Support\Facades\Cache;
 class Comment extends Model
 {
     use HasFactory;
-    use SoftDeletes;
+    use SoftDeletes, Taggable;
 
     protected $fillable = ['user_id','content'];
 
@@ -20,6 +21,7 @@ class Comment extends Model
     // {
     //     return $this->belongsTo(BlogPost::class);
     // }
+
 
     public function commentable()
     {
