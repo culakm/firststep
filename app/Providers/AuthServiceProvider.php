@@ -32,6 +32,12 @@ class AuthServiceProvider extends ServiceProvider
             }
         );
 
+        Gate::define('mailable', function ($user) {
+                return $user->is_admin;
+            }
+        );
+        
+
         // Registrujeme Gate pre user-blogpost
         // Gate::define('update-post', 
         //     function ($user, $post) {

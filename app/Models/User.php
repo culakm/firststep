@@ -43,14 +43,16 @@ class User extends Authenticatable
         return $this->hasMany(Comment::class);
     }
 
-    public function scopeWithMostBlogPosts(Builder $query){
+    public function scopeWithMostBlogPosts(Builder $query)
+    {
         return $query->withCount('blogPosts')
         //->has('blogPosts', '>=', 7) // ma viac ako 6 postov
         //->withoutGlobalScope('Illuminate\Database\Eloquent\SoftDeletingScope') toto by malo odstavit globalny scope admina ktory ukazuje aj delete veci ale nejako to nefunguje
         ->orderBy('blog_posts_count', 'desc');
     }
 
-    public function scopeWithMostBlogPostsLastDay(Builder $query){
+    public function scopeWithMostBlogPostsLastDay(Builder $query)
+    {
         return $query->withCount(
             // vytvori sa nieco ako sub query ktor vyfiltruje blogposty ktore su mladsie ako den a tie az preveruje na pocet postov
             ['blogPosts' => function (Builder $query ){
@@ -60,5 +62,13 @@ class User extends Authenticatable
         )
         ->has('blogPosts', '>=', 2) // doesn't work on web page
         ->orderBy('blog_posts_count', 'desc');
+    }
+
+    // scope pre vyhladanie vsetkych userov ktori komentovali zadany blog post 
+    public function scopeThatHasCommentedOnPost(Builder $query, BlogPost $post){
+        return $query->whereHas('comments', function ($query) use ($post) {
+            return $query->where('commentable_id', '=', $post->id)
+                ->where('commentable_type', '=', BlogPost::class);
+        });
     }
 }
