@@ -74,17 +74,16 @@ class BlogPost extends Model
         
         parent::boot();
 
-        static::deleting(function (BlogPost $post){
-            $post->comments()->delete();
-            Cache::tags(['blog_post'])->forget("blog_post_{$post->id}");
-        });
+        // static::deleting(function (BlogPost $blogPost){
+        //     // obsluha cache sa premiestnila do observeru app/Observers/BlogPostObserver.php
+        // });
 
-        static::updating(function (BlogPost $post){
-            Cache::tags(['blog_post'])->forget("blog_post_{$post->id}");
-        });
+        // static::updating(function (BlogPost $blogPost){
+        //     // obsluha cache sa premiestnila do observeru app/Observers/BlogPostObserver.php
+        // });
 
-        static::restoring(function (BlogPost $post){
-            $post->comments()->restore();
-        });
+        // static::restoring(function (BlogPost $blogPost){
+        //     // obsluha cache sa premiestnila do observeru app/Observers/BlogPostObserver.php
+        // });
     }
 }

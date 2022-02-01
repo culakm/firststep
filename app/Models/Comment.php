@@ -39,20 +39,12 @@ class Comment extends Model
         return $query->orderBy(static::CREATED_AT, 'desc');
     }
 
-    public static function boot(){
-        parent::boot();
+    // toto nepotrebujeme pretoze je to v observeri
+    // public static function boot(){
+    //     parent::boot();
 
-        static::creating(function (Comment $comment){
-            // pred polymorph
-            // Cache::tags(['blog_post'])->forget("blog_post_{$comment->blog_post_id}");
-
-            // polymorph
-            if ($comment->commentable_type === BlogPost::class ) {
-                Cache::tags(['blog_post'])->forget("blog_post_{$comment->commentable_id}");
-                // toto je aj v pripade ze nie je polymorph
-                Cache::tags(['blog_post'])->forget('posts_most_commented');
-            }
-            
-        });
-    }
+    //     // static::creating(function (Comment $comment){
+    //     //     // funkcia je implementovana v observeri            
+    //     // });
+    // }
 }
