@@ -31,7 +31,9 @@
 @tags(['tags' => $post->tags])
 @endtags
 
-<p>Comments: {{ $post->comments_count }}</p>
+{{--  {{ trans_choice('messages.comments',$post->comments_count, ['count' => $post->comments_count]) }}  --}}
+{{ trans_choice('messages.comments',$post->comments_count) }}
+
 {{-- <a href="{{ route('posts.edit', ['post' => $post->id]) }}" class="btn btn-primary me-3 my-3">Add comment</a> --}}
 <div class="mb-3">
     @auth

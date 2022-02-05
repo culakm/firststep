@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\CommentPosted as EventsCommentPosted;
 use App\Http\Requests\StoreComment;
 use App\Jobs\NotifyUsersPostWasCommented;
 use App\Jobs\ThrottledMail;
@@ -37,7 +38,8 @@ class PostCommentController extends Controller
         // posle mail tomu kto vytvoril post
         //Mail::to($post->user)->queue(new CommentPostedMarkdown($comment));
         // toto je to iste ale ideme cez Redis queue
-        ThrottledMail::dispatch(new CommentPostedMarkdown($comment), $post->user)->onQueue('high');
+        // toto je volane v listeneri
+        //ThrottledMail::dispatch(new CommentPostedMarkdown($comment), $post->user)->onQueue('high');
 
 
         // s delayom 
@@ -45,8 +47,11 @@ class PostCommentController extends Controller
         // Mail::to($post->user)->later($when,new CommentPostedMarkdown($comment));
 
         // volame Job ktory posle mail notifikaciu vsetkym userom ktori kedy komentovali post
-        NotifyUsersPostWasCommented::dispatch($comment)->onQueue('low');
+        // toto je volane v listeneri
+        // NotifyUsersPostWasCommented::dispatch($comment)->onQueue('low');
 
+
+        event(new EventsCommentPosted($comment));
 
         return redirect()->back()->withStatus('Comment was added');
     }

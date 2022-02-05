@@ -46,7 +46,8 @@
         @endtags
 
         {{-- cached value --}}
-        <p>Currently read by {{ $counter }} people</p>
+        {{--  <p>Currently read by {{ $counter }} people</p>  --}}
+        <p>{{ trans_choice('messages.people.reading',$counter) }}</p>
 
         <h4>Comments</h4>
         @comment_form(['route' => route('posts.comments.store', ['post' => $post->id])])

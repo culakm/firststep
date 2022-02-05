@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\BlogPostPosted;
 use Illuminate\Http\Request;
 use App\Http\Requests\StorePost;
 use App\Models\BlogPost;
 use App\Models\Image;
-use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
@@ -122,6 +121,10 @@ class PostController extends Controller
                 Image::make(['path' => $path])
             );
         }
+
+        // posle mail vsetkym adminom ked je pridany novy blogpost
+        // generuje event
+        event(new BlogPostPosted($post));
 
         $request->session()->flash('status', 'BlogPost was created');
 

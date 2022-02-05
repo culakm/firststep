@@ -27,12 +27,24 @@
             <div class="col-8">
                 <div class="form-group">
                     <label for="name">Name:</label>
-                    <input name="name" class="form-control" value="" type="text" />
+                    <input id="name" name="name" class="form-control" value="{{ $user->name }}" type="text" />
+                </div>
+
+                <div class="form-group">
+                    <label for="name">Language:</label>
+                    <select id="locale" name="locale" class="form-control" >
+                        <option value="pako" >pako</option>
+                        @foreach ( App\Models\User::LOCALES as $locale => $label)
+                            <option value="{{ $locale }}" {{ $user->locale !== $locale ? '' : 'selected' }}>
+                                {{ $label }}
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
 
                 @errors @enderrors
 
-                <div class="form-group">
+                <div class="form-group mt-2">
                     <input class="button button-primary" value="Save changes" type="submit" />
                 </div>
             </div>

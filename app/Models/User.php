@@ -21,6 +21,12 @@ class User extends Authenticatable
     // The attributes that should be cast to native types.
     protected $casts = ['email_verified_at' => 'datetime'];
 
+    public const LOCALES = [
+        'en' => 'English',
+        'es' => 'Espanol',
+        'de' => 'Deutsch'
+    ];
+
     public function blogPosts()
     {
         return $this->hasMany(BlogPost::class);
@@ -70,5 +76,10 @@ class User extends Authenticatable
             return $query->where('commentable_id', '=', $post->id)
                 ->where('commentable_type', '=', BlogPost::class);
         });
+    }
+
+    // scope pre vyhladanie vsetkych admonov
+    public function scopeThatIsAnAdmin(Builder $query){
+        return $query->where('is_admin', true);
     }
 }

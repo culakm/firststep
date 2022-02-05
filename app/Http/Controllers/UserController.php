@@ -79,6 +79,7 @@ class UserController extends Controller
     public function update(UpdateUser $request, User $user)
     {
 
+        // ulozime avatara
         if ($request->hasFile('avatar')){
             $path = $request->file('avatar')->store('avatars');
 
@@ -95,21 +96,26 @@ class UserController extends Controller
                     Image::make(['path' => $path])
                 );
             }
-
-            // po ulozeni to presmeruje a zobrazi flash
-            // v dvoch krokoch
-            // $request->session()->flash('status', 'User was updated');
-            // return redirect()->route('users.show', ['user' => $user->id]);
-
-            // naraz
-            return redirect()
-                // presmerovanie na show
-                //->route('users.show', ['user' => $user->id])
-                // presmerovanie na seba, update
-                ->back()
-                ->withStatus('Profile image was updated');
-
         }
+
+        //ulozime meno a locale
+        $user->name = $request->get('name');
+        $user->locale = $request->get('locale');
+        $user->save();
+
+        // po ulozeni to presmeruje a zobrazi flash
+        // v dvoch krokoch
+        // $request->session()->flash('status', 'User was updated');
+        // return redirect()->route('users.show', ['user' => $user->id]);
+
+        // naraz
+        return redirect()
+            // presmerovanie na show
+            //->route('users.show', ['user' => $user->id])
+            // presmerovanie na seba, update
+            ->back()
+            ->withStatus('Profile was updated');
+
         //return view('users.update', ['user' => $user]);
     }
 
