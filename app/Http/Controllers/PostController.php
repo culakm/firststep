@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StorePost;
 use App\Models\BlogPost;
 use App\Models\Image;
+use App\Services\Counter;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
@@ -40,10 +41,13 @@ class PostController extends Controller
     //     ]
     // ];
 
-    public function __construct()
+    private $counter;
+
+    public function __construct(Counter $counter)
     {
         $this->middleware('auth')
-         ->only(['create','store','edit','update','destroy']);   
+         ->only(['create','store','edit','update','destroy']);
+        $this->counter = $counter;
     }
 
 
@@ -158,58 +162,13 @@ class PostController extends Controller
             ->FindOrFail($id);
         });
 
-        // jedinecne session_id
-        $session_id = session()->getId();
-        // pocet userov
-        $counter_key = "blog_post_{$id}_counter";
-        // info o useroch ktory navstivili stranky
-        $users_key = "blog_post_{$id}_users";
-
-        //pole nacitane z cache : session_id => posledny navstiveny cas
-        $users = Cache::tags(['blog_post'])->get($users_key, []);
-
-        // neexpirovany useri pre $users
-        $users_update = [];
-        $difference = 0;
-        $now = now();
-
-        foreach ($users as $session => $last_visit_time) {
-            // ak rozdiel medzi now() a poslednej navsetvy nejakeho usera je viac ako 1 minuta
-            if ($now->diffInMinutes($last_visit_time) >= 1) {
-                $difference--;
-            } else {
-                $users_update[$session] = $last_visit_time;
-            }
-        }
-
-        
-        if (
-            // user este nie je na zozname ?
-            !array_key_exists($session_id, $users)
-            // user bol na zozname ale vyexpiroval
-            || $now->diffInMinutes($users[$session_id]) >= 1
-        ){
-            $difference++;
-        }
-
-        // updatneme cas navstivenia pre usera
-        $users_update[$session_id] = $now;
-        // do cache dame cerstvy zoznam userov s poslednym casom navstivenia
-        Cache::forever($users_key,$users_update);
-        // updatneme pocet navstivenia
-        if (!Cache::tags(['blog_post'])->has($counter_key)){
-            // kluc este neexistuje
-            Cache::tags(['blog_post'])->forever($counter_key,1);
-        } else {
-            Cache::tags(['blog_post'])->increment($counter_key, $difference);
-        }
-        
-        $counter = Cache::tags(['blog_post'])->get($counter_key);
-
+        // Vselijake cachovane cisla pre pocitanie pristupov. Service
+        // toto volanie je nahradene dependecy injection v kostruktore, potom je to volane ako $this->counter
+        //$counter = resolve(Counter::class);
 
         return view('posts.show', [
             'post' => $bp,
-            'counter' => $counter
+            'counter' => $this->counter->increment("blog_post_{$id}", ['blog-post'])
         ]);
     }
 
