@@ -4,7 +4,7 @@
         @if (isset($user_id))
             by <a href="{{ route('users.show', ['user' => $user_id]) }}">{{ $name }}</a>
         @else
-            by {{ $name }}
+            by {{ $name }} lalal
         @endif
     @endif
     

@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\BlogPostPosted;
-use Illuminate\Http\Request;
-use App\Http\Requests\StorePost;
 use App\Models\BlogPost;
-use App\Models\Image;
-use App\Services\Counter;
+use App\Http\Requests\StorePost;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Image;
+use App\Events\BlogPostPosted;
+use App\Facades\CounterFacade;
 
 class PostController extends Controller
 {
@@ -41,13 +40,10 @@ class PostController extends Controller
     //     ]
     // ];
 
-    private $counter;
-
-    public function __construct(Counter $counter)
+    public function __construct()
     {
         $this->middleware('auth')
          ->only(['create','store','edit','update','destroy']);
-        $this->counter = $counter;
     }
 
 
@@ -168,7 +164,7 @@ class PostController extends Controller
 
         return view('posts.show', [
             'post' => $bp,
-            'counter' => $this->counter->increment("blog_post_{$id}", ['blog-post'])
+            'counter' => CounterFacade::increment("blog-post-{$id}", ['blog-post']),
         ]);
     }
 
