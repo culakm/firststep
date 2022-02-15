@@ -18,6 +18,6 @@ class UsersTableSeeder extends Seeder
 
         User::factory()->defaultUser()->create();
         User::factory()->culakUser()->create();
-        User::factory()->count($users_count - 1)->create(); // Pretoze 1 sme uz vygenerovali ako defaultUser
+        User::factory()->count($users_count - 2)->create(); // Pretoze 2 sme uz vygenerovali ako defaultUser
     }
 }

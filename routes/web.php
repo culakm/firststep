@@ -62,7 +62,7 @@ Route::get('/posts/tag/{tag_id}', [PostTagController::class,'index'])->name('pos
 
 // toto vytvori route posts.comments.store co je akcia v PostCommentController
 // ine akcie nepotrebujeme pretoze comment sa vzdy zobrazuje v ramci blog postu
-Route::resource('posts.comments', PostCommentController::class)->only(['store']);
+Route::resource('posts.comments', PostCommentController::class)->only(['index','store']);
 Route::resource('users.comments', UserCommentController::class)->only(['store']);
 Route::resource('users', UserController::class)->only(['show', 'edit', 'update']);
 

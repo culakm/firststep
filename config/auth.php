@@ -44,6 +44,8 @@ return [
         'api' => [
             'driver' => 'token',
             'provider' => 'users',
+            // 'input_key' => 'api_token', // toto je meno parametru pre odosielanie (napri v url)
+            // 'storage_token' => 'api_token', // toto je meno v DB
             'hash' => false,
         ],
     ],

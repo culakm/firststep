@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Cache;
 
 class Comment extends Model
 {
@@ -16,6 +15,8 @@ class Comment extends Model
 
     protected $fillable = ['user_id','content'];
 
+
+    protected $hidden = ['user_id','deleted_at','commentable_id','commentable_type'];
     // pred polymorph
     // public function blogPost()
     // {

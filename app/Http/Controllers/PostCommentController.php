@@ -10,6 +10,7 @@ use App\Mail\CommentPosted;
 use App\Mail\CommentPostedMarkdown;
 use App\Models\BlogPost;
 use Illuminate\Support\Facades\Mail;
+use App\Http\Resources\Comment as CommentResource;
 
 class PostCommentController extends Controller
 {
@@ -17,6 +18,28 @@ class PostCommentController extends Controller
     {
         $this->middleware('auth')
          ->only(['store']);   
+    }
+
+    // toto je na testovanie API s json
+    public function index(BlogPost $post)
+    {
+        // dump(gettype($post->comments));
+        // dump(get_class($post->comments));
+        // dd(is_array($post->comments));
+
+        // vracia to cez resources cele collection
+        return CommentResource::collection($post->comments);
+        // pokial by to neslo moze sa natvrdo hladat relationship
+        // return CommentResource::collection($post->comments()->with('user')->get());
+
+        // vracia to s cez resources s jednou polozkou
+        // return new CommentResource($post->comments->first());
+
+        // vracia to bez resources
+        // len komenty
+        // return $post->comments;
+        // komenty aj s userom
+        // return $post->comments()->with('user')->get();
     }
 
     public function store(BlogPost $post, StoreComment $request)

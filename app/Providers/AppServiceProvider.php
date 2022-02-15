@@ -12,6 +12,7 @@ use App\Models\Comment;
 use App\Observers\CommentObserver;
 use App\Services\Counter;
 use App\Services\DummyCounter;
+use App\Http\Resources\Comment as CommentResource;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -70,5 +71,9 @@ class AppServiceProvider extends ServiceProvider
             // takto staci vymenit service
             //DummyCounter ::class
         );
+
+        // CommentResource JSON data potom nie su obalene v "data": []
+        CommentResource::withoutWrapping();
+        
     }
 }
