@@ -35,7 +35,7 @@ class PostTest extends TestCase
         // Assert
         // Site
         $response->assertSeeText('1Post title');
-        $response->assertSeeText('Comments: 0');
+        $response->assertSeeText('No comments yet');
 
         // DB
         $this->assertDatabaseHas('blog_posts',[
@@ -58,7 +58,7 @@ class PostTest extends TestCase
 
         $response = $this->get('/posts');
 
-        $response->assertSeeText('Comments: 4');
+        $response->assertSeeText('4 comments');
     }
 
     public function testStoreValid()

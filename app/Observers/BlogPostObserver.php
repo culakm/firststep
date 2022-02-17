@@ -60,7 +60,7 @@ class BlogPostObserver
     public function deleting(BlogPost $blogPost)
     {
         $blogPost->comments()->delete();
-        Cache::tags(['blog_post'])->forget("blog_post_{$post->id}");
+        Cache::tags(['blog_post'])->forget("blog_post_{$blogPost->id}");
     }
 
 

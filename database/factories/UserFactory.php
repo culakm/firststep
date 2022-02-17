@@ -26,7 +26,8 @@ class UserFactory extends Factory
             'name' => $this->faker->name,
             'email' => $this->faker->unique()->safeEmail,
             'email_verified_at' => now(),
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // defaultny password je 'password'
+            //'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // defaultny password je 'password'
+            'password' => Hash::make('pakoPAKO', ['rounds' => 12]), // defaultny password je 'password'
             'api_token' => Str::random(80), // tu sy sa mal dat pouzit aj prikaz str_random(80) ale toto by malo byt bezpecnejsie
             'remember_token' => Str::random(10),
             'is_admin' => false 

@@ -13,7 +13,7 @@ class HomeTest extends TestCase
 
         $response->assertStatus(200);
 
-        $response->assertSeeText('Hello world2, ja som home page,index');
+        $response->assertSeeText('messages.welcome');
     }
 
     public function testContactPageIsWorkingCorrectly()

@@ -21,6 +21,7 @@ use App\Http\Controllers\PostTagController;
 use App\Http\Controllers\UserController;
 use App\Mail\CommentPostedMarkdown;
 use App\Models\Comment;
+use Illuminate\Support\Facades\Auth;
 //use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -62,6 +63,7 @@ Route::get('/posts/tag/{tag_id}', [PostTagController::class,'index'])->name('pos
 
 // toto vytvori route posts.comments.store co je akcia v PostCommentController
 // ine akcie nepotrebujeme pretoze comment sa vzdy zobrazuje v ramci blog postu
+// pozor, PostCommentController je aj api/v1/ a su aj nastavene api routy
 Route::resource('posts.comments', PostCommentController::class)->only(['index','store']);
 Route::resource('users.comments', UserCommentController::class)->only(['store']);
 Route::resource('users', UserController::class)->only(['show', 'edit', 'update']);

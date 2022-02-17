@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreComment;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Comment as CommentResource;
+use App\Models\Comment;
 
 class PostCommentController extends Controller
 {
@@ -15,7 +16,7 @@ class PostCommentController extends Controller
     public function __construct()
     {
         // auth:api urcuje ze pre auth pouzijeme guard api z config/auth.php
-        $this->middleware('auth:api')->only('store');
+        $this->middleware('auth:api')->only(['store', 'update', 'destroy']);
     }
 
     /**
@@ -62,9 +63,9 @@ class PostCommentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(BlogPost $post, Comment $comment)
     {
-        //
+        return new CommentResource($comment);
     }
 
     /**
@@ -74,9 +75,15 @@ class PostCommentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(BlogPost $post, Comment $comment, StoreComment $request)
     {
-        //
+        // pozreme policy pre update action/ability
+        $this->authorize($comment);
+        // save content
+        $comment->content = $request->input('content');
+        $comment->save();
+        // vrati zmeneny comment
+        return new CommentResource($comment);
     }
 
     /**
@@ -85,8 +92,11 @@ class PostCommentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(BlogPost $post, Comment $comment)
     {
-        //
+        $this->authorize($comment);
+
+        $comment->delete();
+        return response()->noContent();
     }
 }

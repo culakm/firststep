@@ -239,7 +239,7 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         $post = BlogPost::FindOrFail($id);
         // Check if blogpost was created by loged user
